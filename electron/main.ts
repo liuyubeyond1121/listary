@@ -148,7 +148,8 @@ function registerSearchShortcut() {
 
 function createTray() {
   if (tray) return
-  const iconPath = path.join(app.getAppPath(), 'electron', 'icon.png')
+  // 开发时 __dirname 为 dist/electron，打包后在 app.asar/dist/electron
+  const iconPath = path.join(__dirname, '..', '..', 'electron', 'icon.png')
   let icon = nativeImage.createFromPath(iconPath)
   if (icon.isEmpty()) {
     icon = nativeImage.createFromDataURL(
