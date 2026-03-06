@@ -1,9 +1,11 @@
-import { app, BrowserWindow, dialog, globalShortcut, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, nativeImage, shell, Tray } from 'electron'
 import * as fs from 'fs'
 import * as path from 'path'
 import Store from 'electron-store'
 
 let mainWindow: BrowserWindow | null = null
+let searchPopup: BrowserWindow | null = null
+let tray: Tray | null = null
 
 const store = new Store<{ indexedFolders: string[] }>({
   defaults: {
@@ -59,6 +61,9 @@ function saveIndexToDisk() {
   fs.writeFileSync(INDEX_PATH, JSON.stringify(entries), 'utf-8')
 }
 
+const SEARCH_POPUP_URL_DEV = 'http://localhost:5173/?popup=1'
+const SEARCH_POPUP_URL_PROD = `file://${path.join(__dirname, '../index.html')}?popup=1`
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -83,21 +88,85 @@ function createWindow() {
     mainWindow?.show()
   })
 
+  mainWindow.on('close', (e) => {
+    e.preventDefault()
+    mainWindow?.hide()
+  })
+
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 }
 
+function getSearchPopupUrl() {
+  return process.env.NODE_ENV === 'development' ? SEARCH_POPUP_URL_DEV : SEARCH_POPUP_URL_PROD
+}
+
+function createSearchPopup() {
+  if (searchPopup) {
+    searchPopup.show()
+    searchPopup.focus()
+    return
+  }
+
+  searchPopup = new BrowserWindow({
+    width: 720,
+    height: 520,
+    minWidth: 400,
+    minHeight: 300,
+    frame: false,
+    resizable: true,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+    show: false,
+  })
+
+  searchPopup.loadURL(getSearchPopupUrl())
+
+  searchPopup.once('ready-to-show', () => {
+    searchPopup?.show()
+    searchPopup?.focus()
+  })
+
+  searchPopup.on('closed', () => {
+    searchPopup = null
+  })
+}
+
 function registerSearchShortcut() {
   const openSearch = () => {
-    if (mainWindow) {
-      mainWindow.focus()
-      mainWindow.webContents.send('open-search')
-    }
+    createSearchPopup()
   }
-  // Ctrl+Space 在 Windows 上常被输入法占用，同时注册 Ctrl+Shift+Space 作为备用
   globalShortcut.register('CommandOrControl+Space', openSearch)
   globalShortcut.register('CommandOrControl+Shift+Space', openSearch)
+}
+
+function createTray() {
+  if (tray) return
+  const iconPath = path.join(app.getAppPath(), 'electron', 'icon.png')
+  let icon = nativeImage.createFromPath(iconPath)
+  if (icon.isEmpty()) {
+    icon = nativeImage.createFromDataURL(
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAOklEQVQ4y2P4//8/AyWYiYFCMIw0MDAwMPxnYGD4T6UBVAkexmYYhqFhGIaGYRgahmFoGIahYQAApegDETl2b1AAAAAASUVORK5CYII='
+    )
+  }
+  tray = new Tray(icon)
+  tray.setToolTip('文件搜索 - Ctrl+Space 唤出')
+  tray.on('click', () => {
+    mainWindow?.show()
+    mainWindow?.focus()
+  })
+  tray.setContextMenu(
+    Menu.buildFromTemplate([
+      { label: '显示主窗口', click: () => { mainWindow?.show(); mainWindow?.focus() } },
+      { label: '退出', click: () => { app.quit() } },
+    ])
+  )
 }
 
 function unregisterSearchShortcut() {
@@ -108,20 +177,28 @@ function unregisterSearchShortcut() {
 app.whenReady().then(() => {
   initializeIndexStore()
   createWindow()
+  createTray()
   registerSearchShortcut()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
+      createTray()
+    } else {
+      mainWindow?.show()
     }
   })
 })
 
 app.on('window-all-closed', () => {
+  if (searchPopup) searchPopup = null
+  mainWindow = null
+})
+
+app.on('before-quit', () => {
   unregisterSearchShortcut()
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  tray?.destroy()
+  tray = null
 })
 
 ipcMain.handle('scan-folder', async (_, folderPath: string) => {
@@ -234,6 +311,10 @@ ipcMain.handle('browse-folder', async () => {
 
 ipcMain.handle('get-indexed-folders', async () => {
   return store.get('indexedFolders')
+})
+
+ipcMain.handle('hide-search-popup', () => {
+  searchPopup?.hide()
 })
 
 async function scanDirectory(rootPath: string): Promise<IndexedEntry[]> {

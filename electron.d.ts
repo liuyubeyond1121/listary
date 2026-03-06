@@ -18,6 +18,7 @@ export interface ElectronAPI {
   clearIndex: () => Promise<{ success: boolean; error?: string }>
   browseFolder: () => Promise<{ success: boolean; path?: string; canceled?: boolean }>
   getIndexedFolders: () => Promise<string[]>
+  hideSearchPopup: () => Promise<void>
 }
 
 declare global {
