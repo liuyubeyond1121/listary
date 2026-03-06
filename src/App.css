@@ -1,0 +1,130 @@
+.background-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 18px;
+  color: white;
+  background: var(--gradient-main);
+}
+
+.hint-content {
+  text-align: center;
+}
+
+.env-warning {
+  background: rgba(255, 193, 7, 0.25);
+  border: 1px solid rgba(255, 152, 0, 0.6);
+  color: #fff8e1;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px !important;
+  font-size: 14px !important;
+}
+
+.env-warning code {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.hint-content h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.hint-content p {
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.hint-content kbd {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin: 0 8px;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.settings-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.settings-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.stats-hint {
+  font-size: 14px !important;
+  margin-top: 20px !important;
+  opacity: 0.7 !important;
+}
+
+.stats-hint.empty-index {
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.inline-link {
+  background: none;
+  border: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+  opacity: 1;
+}
+
+.inline-link:hover {
+  opacity: 0.9;
+}
+
+.search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  z-index: 1000;
+}
+
+.search-container {
+  width: 800px;
+  max-width: 90vw;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-overlay);
+  overflow: hidden;
+  animation: slideDown var(--transition-normal) ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

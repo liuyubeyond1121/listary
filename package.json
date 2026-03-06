@@ -1,0 +1,33 @@
+{
+  "name": "file-search-app",
+  "version": "1.0.0",
+  "description": "基于 Electron + React 的本地文件快速搜索工具，支持目录索引、全局快捷键唤出，类似 Listary 的轻量实现",
+  "main": "dist/electron/main.js",
+  "private": true,
+  "dependencies": {
+    "electron": "^28.0.0",
+    "electron-store": "^8.1.0",
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3",
+    "electron-builder": "^26.8.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.0",
+    "wait-on": "^9.0.4"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "electron:dev": "npm run build:electron && concurrently \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
+    "electron:build": "vite build && tsc -p tsconfig.electron.json && electron-builder",
+    "electron:pack": "vite build && tsc -p tsconfig.electron.json && electron-builder --dir"
+  }
+}
