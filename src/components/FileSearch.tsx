@@ -7,6 +7,7 @@ interface FileSearchProps {
   onQueryChange: (query: string) => void
   inputRef: React.RefObject<HTMLInputElement | null>
   onClose: () => void
+  showDivider?: boolean
 }
 
 const FileSearch: React.FC<FileSearchProps> = React.memo(({
@@ -14,8 +15,9 @@ const FileSearch: React.FC<FileSearchProps> = React.memo(({
   onQueryChange,
   inputRef,
   onClose,
+  showDivider = true,
 }) => (
-    <div className="file-search">
+    <div className={`file-search ${showDivider ? '' : 'file-search--no-divider'}`}>
       <div className="search-icon">
         <Search size={20} color="#999" />
       </div>

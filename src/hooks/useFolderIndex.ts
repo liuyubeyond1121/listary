@@ -1,4 +1,4 @@
-﻿import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { IndexStats } from '../types'
 
 const initialStats: IndexStats = {

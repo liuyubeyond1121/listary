@@ -132,6 +132,13 @@ const App: React.FC = () => {
     else setIsVisible(false)
   }, [isPopupMode, hidePopup])
 
+  const shouldShowResultList = query.trim().length > 0 && !loading && results.length > 0
+
+  useEffect(() => {
+    if (!isPopupMode || !isElectron || !window.electronAPI?.setSearchPopupExpanded) return
+    window.electronAPI.setSearchPopupExpanded(shouldShowResultList)
+  }, [shouldShowResultList])
+
   return (
     <>
       {!isPopupMode && (
@@ -178,12 +185,17 @@ const App: React.FC = () => {
             aria-expanded={true}
             aria-haspopup="listbox"
           >
-            <FileSearch query={query} onQueryChange={handleQueryChange} inputRef={inputRef} onClose={handleOverlayClose} />
-            {query && (
+            <FileSearch
+              query={query}
+              onQueryChange={handleQueryChange}
+              inputRef={inputRef}
+              onClose={handleOverlayClose}
+              showDivider={shouldShowResultList}
+            />
+            {shouldShowResultList && (
               <ResultList
                 results={results}
                 selectedIndex={selectedIndex}
-                loading={loading}
                 onResultClick={handleResultClick}
                 onHover={setSelectedIndex}
               />
@@ -207,3 +219,5 @@ const App: React.FC = () => {
 }
 
 export default App
+
+

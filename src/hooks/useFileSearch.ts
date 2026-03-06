@@ -60,6 +60,8 @@ export const useFileSearch = () => {
       setLoading(false)
       return
     }
+    // Collapse old results immediately while waiting for the next query response.
+    setResults([])
     timeoutRef.current = setTimeout(() => {
       timeoutRef.current = null
       searchFiles(query)
@@ -72,3 +74,4 @@ export const useFileSearch = () => {
     debouncedSearch,
   }
 }
+

@@ -15,4 +15,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   browseFolder: () => ipcRenderer.invoke('browse-folder'),
   getIndexedFolders: () => ipcRenderer.invoke('get-indexed-folders'),
   hideSearchPopup: () => ipcRenderer.invoke('hide-search-popup'),
+  setSearchPopupExpanded: (expanded: boolean) => ipcRenderer.invoke('set-search-popup-expanded', expanded),
 })

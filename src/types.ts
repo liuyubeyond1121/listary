@@ -1,4 +1,4 @@
-﻿export interface SearchResult {
+export interface SearchResult {
   id: string
   name: string
   path: string

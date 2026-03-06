@@ -63,6 +63,8 @@ function saveIndexToDisk() {
 
 const SEARCH_POPUP_URL_DEV = 'http://localhost:5173/?popup=1'
 const SEARCH_POPUP_URL_PROD = `file://${path.join(__dirname, '../index.html')}?popup=1`
+const SEARCH_POPUP_COLLAPSED_HEIGHT = 96
+const SEARCH_POPUP_EXPANDED_HEIGHT = 520
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -111,9 +113,9 @@ function createSearchPopup() {
 
   searchPopup = new BrowserWindow({
     width: 720,
-    height: 520,
+    height: SEARCH_POPUP_COLLAPSED_HEIGHT,
     minWidth: 400,
-    minHeight: 300,
+    minHeight: SEARCH_POPUP_COLLAPSED_HEIGHT,
     frame: false,
     resizable: true,
     alwaysOnTop: true,
@@ -316,6 +318,14 @@ ipcMain.handle('get-indexed-folders', async () => {
 
 ipcMain.handle('hide-search-popup', () => {
   searchPopup?.hide()
+})
+
+ipcMain.handle('set-search-popup-expanded', async (_, expanded: boolean) => {
+  if (!searchPopup) return
+  const [width] = searchPopup.getSize()
+  const nextHeight = expanded ? SEARCH_POPUP_EXPANDED_HEIGHT : SEARCH_POPUP_COLLAPSED_HEIGHT
+  searchPopup.setSize(width, nextHeight, true)
+  searchPopup.setMinimumSize(400, SEARCH_POPUP_COLLAPSED_HEIGHT)
 })
 
 async function scanDirectory(rootPath: string): Promise<IndexedEntry[]> {

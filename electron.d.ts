@@ -19,6 +19,7 @@ export interface ElectronAPI {
   browseFolder: () => Promise<{ success: boolean; path?: string; canceled?: boolean }>
   getIndexedFolders: () => Promise<string[]>
   hideSearchPopup: () => Promise<void>
+  setSearchPopupExpanded: (expanded: boolean) => Promise<void>
 }
 
 declare global {

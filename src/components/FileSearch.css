@@ -6,6 +6,10 @@
   position: relative;
 }
 
+.file-search--no-divider {
+  border-bottom: none;
+}
+
 .search-icon {
   position: absolute;
   left: 20px;

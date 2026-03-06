@@ -111,16 +111,15 @@
 .search-overlay--popup {
   padding: 16px;
   align-items: flex-start;
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
 }
 
 .search-overlay--popup .search-container {
   width: 100%;
   max-width: 100%;
-  flex: 1;
-  min-height: 0;
   display: flex;
   flex-direction: column;
+  box-shadow: none;
 }
 
 .search-container {
